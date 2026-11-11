@@ -126,6 +126,36 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+class CategoryPage extends StatelessWidget {
+  final void Function(String) onSelect;
+
+  const CategoryPage({super.key, required this.onSelect});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<String>>(
+      future: DB.instance.categories(),
+      builder: (context, snapshot) {
+        final items = snapshot.data ?? [];
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: items.map((category) {
+            return ListTile(
+              leading: const Icon(Icons.category),
+              title: Text(category),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => onSelect(category),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
 class DashboardPage extends StatelessWidget {
   final bool admin;
   final VoidCallback onLogin;
@@ -380,4 +410,4 @@ class _ArticleFormPageState extends State<ArticleFormPage>{
       ),
     );
   }
-  
+}
