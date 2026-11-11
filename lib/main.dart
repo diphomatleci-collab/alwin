@@ -306,37 +306,78 @@ class _ArticleFormPageState extends State<ArticleFormPage>{
     await DB.instance.save(id:widget.article?['id'] as int?,title:title.text,category:category!,content:content.text);
     if(mounted)Navigator.pop(context);
   }
-  @override Widget build(BuildContext context)=>Scaffold(
-    appBar:AppBar(title:Text(widget.article==null?'Tambah Artikel':'Edit Artikel')),
-    body:Center(child:SingleChildScrollView(padding:const EdgeInsets.all(18),
-      child:ConstrainedBox(constraints:const BoxConstraints(maxWidth:650),
-        child:Card(child:Padding(padding:const EdgeInsets.all(20),
-          child:Form(key:keyForm,child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[
-            TextFormField(controller:title,maxLength:80,decoration:const InputDecoration(labelText:'Judul artikel'),
-              validator:(v){if(v==null||v.trim().isEmpty)return'Judul wajib diisi.';if(v.trim().length<3)return'Judul minimal 3 karakter.';return null;}),
-            const SizedBox(height:14),
-            DropdownButtonFormField<String>(value:category,decoration:const InputDecoration(labelText:'Kategori mata pelajaran'),
-              items:categories.map((c)=>DropdownMenuItem(value:c,child:Text(c,overflow:TextOverflow.ellipsis))).toList(),
-              onChanged:(v)=>setState(()=>category=v),validator:(v)=>v==null?'Pilih kategori.':null),
-            const SizedBox(height:14),
-            TextFormField(controller:content,minLines:5,maxLines:9,maxLength:2000,
-              decoration:const InputDecoration(labelText:'Isi materi / artikel',alignLabelWithHint:true),
-              validator:(v){if(v==null||v.trim().isEmpty)return'Isi artikel wajib diisi.';if(v.trim().length<10)return'Isi minimal 10 karakter.';return null;}),
-            const SizedBox(height:18),
-            FilledButton.icon(onPressed:save,icon:const Icon(Icons.save),label:const Text('Simpan Data'))
-          ])))))));
-}
-
-class CategoryPage extends StatelessWidget {
-  final ValueChanged<String> onSelect;
-  const CategoryPage({super.key,required this.onSelect});
-  @override Widget build(BuildContext context)=>FutureBuilder<List<String>>(
-    future:DB.instance.categories(),builder:(context,snapshot){
-      final rows=snapshot.data??[];
-      if(snapshot.connectionState==ConnectionState.waiting)return const Center(child:CircularProgressIndicator());
-      return ListView.separated(padding:const EdgeInsets.all(16),itemCount:rows.length,
-        separatorBuilder:(_,__)=>const SizedBox(height:8),
-        itemBuilder:(context,i)=>Card(child:ListTile(leading:const Icon(Icons.school,color:Color(0xFF2457C5)),
-          title:Text(rows[i]),trailing:const Icon(Icons.chevron_right),onTap:()=>onSelect(rows[i]))));
-    });
-}
+    @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.article == null ? 'Tambah Artikel' : 'Edit Artikel'),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(18),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 650),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: keyForm,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextFormField(
+                        controller: title,
+                        maxLength: 80,
+                        decoration: const InputDecoration(labelText: 'Judul artikel'),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Judul wajib diisi.';
+                          if (v.trim().length < 3) return 'Judul minimal 3 karakter.';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      DropdownButtonFormField<String>(
+                        value: category,
+                        decoration: const InputDecoration(labelText: 'Kategori mata pelajaran'),
+                        items: categories
+                            .map((c) => DropdownMenuItem(
+                                  value: c,
+                                  child: Text(c, overflow: TextOverflow.ellipsis),
+                                ))
+                            .toList(),
+                        onChanged: (v) => setState(() => category = v),
+                        validator: (v) => v == null ? 'Pilih kategori.' : null,
+                      ),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                        controller: content,
+                        minLines: 5,
+                        maxLines: 9,
+                        maxLength: 2000,
+                        decoration: const InputDecoration(
+                          labelText: 'Isi materi / artikel',
+                          alignLabelWithHint: true,
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Isi artikel wajib diisi.';
+                          if (v.trim().length < 10) return 'Isi minimal 10 karakter.';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 18),
+                      FilledButton.icon(
+                        onPressed: save,
+                        icon: const Icon(Icons.save),
+                        label: const Text('Simpan Data'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  
